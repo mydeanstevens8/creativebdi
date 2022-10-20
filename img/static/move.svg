@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<svg width="720px" height="720px" viewBox="0 0 720 720" xmlns="http://www.w3.org/2000/svg" vesion="1.1">
+    <g transform="translate(360, 360)">
+        <polygon points="
+                         -250, -40  -250, -100  -360, 0  -250, 100  -250, 40  -40, 40
+                         -40, 250  -100, 250  0, 360  100, 250  40, 250  40, 40
+                         250, 40  250, 100  360, 0  250, -100  250, -40  40, -40
+                         40, -250  100, -250  0, -360  -100, -250  -40, -250  -40, -40
+                         " fill="black" />
+    </g>
+</svg>

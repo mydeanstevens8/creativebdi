@@ -1,0 +1,8 @@
+Built on top of a jQuery framework on a Canvas.
+
+Consider the use of TensorFlow or another machine learning framework.
+
+Use the SVG standard.
+
+Tensorflow JS: <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+

@@ -1,0 +1,985 @@
+/*General*/
+
+html {
+	font-family: Arial, Helvetica, sans-serif;
+	background: #EEE;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+}
+
+main {
+	display: block;
+}
+
+main .headg {
+	color: white;
+	background: #333;
+	margin: 0;
+	padding: 0;
+}
+
+main .headg header{
+	background: #222;
+	color: white;
+}
+
+main .headg header h1{
+	font-family: Times, serif;
+	font-size: 1.5rem;
+	font-weight: normal;
+	margin: 0 auto;
+	padding: 0.5em;
+	font-style: italic;
+	max-width: 64rem;
+}
+
+.screenReaderText {
+    /*Some screen readers may not read text with display:none; so set font size to 0 instead and color to transparent.*/
+    font-size: 0;
+    color: rgba(0, 0, 0, 0);
+    
+    position: fixed;
+    top: -9999px;
+    left: -9999px;
+    z-index: -1000;
+}
+
+/*Navbars*/
+
+main .headg nav {
+	margin: 0;
+	padding: 0;
+	background: #555;
+	cursor: default;
+}
+
+main .headg nav > ul {
+	list-style-type: none;
+	display: block;
+	margin:0 auto;
+	padding:0.25em 0;
+
+	font-size: 1.25rem;
+	max-width: 64rem;
+
+}
+
+main .headg nav > ul > li {
+	position: static;
+	
+	display: inline-block;
+	margin:0;
+	padding: 0;
+
+	border-radius: 4px;
+}
+
+main .headg nav ul > li > a,
+main .headg nav ul > li > button {
+    font-size: 1em;
+    background: transparent;
+    
+    position: relative;
+    
+	display: inline-block;
+	margin:0;
+	padding: 0.5em;
+	color: white;
+	font-weight: normal;
+	text-decoration: none;
+
+	cursor: pointer;
+	border-radius: 4px;
+	
+	transition: 0.15s;
+    appearance: none;
+    border: none;
+    
+    width: 100%;
+    box-sizing: border-box;
+    
+    text-align: left;
+    
+}
+
+main .headg > nav > ul > li > a,
+main .headg > nav > ul > li > button {
+	padding: 0.5em;
+    border: solid #888 0;
+    border-width: 1px;
+}
+
+main .headg nav ul > li > a > img.sole,
+main .headg nav ul > li > button > img.sole {
+    display: inline-block;
+    position: relative;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin: -0.25rem 0;
+}
+
+main .headg nav ul > li > a:visited {
+	color: white;
+}
+
+
+main .headg nav ul > li > a:hover, 
+main .headg nav ul > li > button:hover {
+	color: white;
+	background: #333;
+}
+
+main .headg nav ul > li > a:active,
+main .headg nav ul > li > a.selected,
+main .headg nav ul > li > button:active,
+main .headg nav ul > li > button.selected {
+	color: #BDF;
+	background: #222;
+	
+	transition: 0.05s;
+}
+main .headg nav > ul > li.dropdown > a:after,
+main .headg nav > ul > li.dropdown > button:after{
+	font-size: 0.75em;
+	content: "\25bc";
+	margin-left: 0.25rem;
+}
+
+main .headg > nav > ul > li.dropdown > a:after,
+main .headg > nav > ul > li.dropdown > button:after {
+	margin-left: 0.75rem;
+	font-size: 1em;
+    color: #DF8;
+}
+
+ul > li.dropdown {
+	position: relative !important;
+}
+
+ul > li.dropdown > ul {
+	position: absolute;
+	background: #555;
+	box-shadow: 0 2px 5px #000;
+	border-radius: 8px;
+
+	left: 0;
+	top: 100%;
+
+	width: 100%;
+	min-width: 12em;
+	list-style-type: none;
+	z-index: 30;
+
+	margin: 0 -0.25em;
+	padding: 0 0.25em;
+	display: block;
+}
+
+ul > li.dropdown > ul {
+	display: none;
+}
+
+ul > li.dropdown:hover > ul {
+	display: block;
+}
+
+ul > li.dropdown > ul > li {
+	display: block;
+	margin: 0.25em 0;
+	padding: 0;
+
+	border-radius: 4px;
+}
+
+ul > li.dropdown > ul > li > a,
+ul > li.dropdown > ul > li > button {
+	display: block;
+}
+
+ul > li.dropdown > ul > li.inline {
+    display: inline-block;
+    margin: 0.25em 0;
+    padding: 0;
+}
+
+ul > li.dropdown > ul.flex {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+ul > li.dropdown:hover > ul.flex {
+    display: flex;
+}
+
+ul > li.dropdown > ul.flex > li {
+    display: block;
+    margin: 0.125em;
+    padding: 0;
+}
+
+/*Specific dropdown menus*/
+
+ul > li.dropdown.actionColorDrop > ul {
+	min-width: 32em;
+}
+
+ul > li.dropdown.actionColorDrop > ul > li > .actionPaint {
+    /* Probably set it so that screen readers can pick it up properly without being seen visually.*/
+    font-size: 0;
+    
+    height: 3rem;
+    width: 3rem;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    vertical-align: center;
+    
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    color: white;
+    /* Multi shadow text */
+    text-shadow: 1px 1px 0px #000, -1px 1px 0px #000, -1px -1px 0px #000, 1px -1px 0px #000, 0 1px 0px #000, 1px 0px 0px #000, -1px 0 0px #000, 0 -1px 0px #000;
+    
+    border: solid #000 1px;
+}
+
+ul > li.dropdown.actionColorDrop > ul > li > .actionPaint.transparent {
+    background-color: white !important;
+    background: 
+        linear-gradient(to right, rgba(128,128,128,0.5) 0%, rgba(128,128,128,0.5) 50%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0.5) 100%),
+        linear-gradient(to bottom, rgba(128,128,128,0.5) 0%, rgba(128,128,128,0.5) 50%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0.5) 100%) 
+        !important;
+    background:
+        conic-gradient(from 0deg, lightgray, lightgray 25%, white 25%, white 50%, lightgray 50%, lightgray 75%, white 75%, white) !important;
+}
+
+
+ul > li.dropdown.actionColorDrop > ul > li > .actionPaint:hover {
+    border-color: white;
+}
+
+ul > li.dropdown.actionColorDrop > ul > li > .actionPaint:active {
+    border-color: yellow;
+}
+
+ul > li.dropdown.actionColorDrop > ul > li > .actionPaintCustom {
+    font-size: 0.8em;
+    height: 3rem;
+    width: 6.25rem;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    vertical-align: center;
+    
+    box-sizing: border-box;
+    border: solid #000 1px;
+}
+
+.actionStrokeWidthInput {
+    padding: 0.5rem;
+    color: white;
+    background: #444;
+    border: solid #CCC 1px;
+    border-radius: 0.5rem;
+    width: 100%;
+    margin: 0 auto;
+    display: block;
+    font-size: 1.25em;
+    box-sizing: border-box;
+}
+
+
+.paintarea {
+	display: block;
+	margin: 1em;
+	padding: 0;
+	text-align: center;
+}
+
+.paintarea .paInner {
+	display: block;
+	background: white;
+	margin: 0 auto;
+	padding: 1em;
+	box-shadow: 0 5px 15px #888;
+	border-radius: 8px;
+	max-width: 64rem;
+}
+
+.paintarea .paInner .paI2 {
+	border: dashed #CCC 1px;
+	display: block;
+	margin: 0 auto;
+	padding: 0;
+	position: relative;
+	max-width: 50rem;
+}
+
+.paintarea .paInner .paI2 svg {
+	width: 100%;
+	height: auto;
+	display: block;
+	margin: 0;
+	padding: 0;
+}
+
+.paintarea .paControls {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	width: auto;
+	height: auto;
+    
+    z-index: 10;
+	
+	display: block;
+	margin: 0;
+	padding: 0;
+
+	overflow: hidden;
+
+	-webkit-user-select: none;
+	user-select: none;
+
+	pointer-events: none;
+}
+
+@keyframes dragboxAnimation {
+    0%, 100% {
+        margin: -4px;
+        padding: 2px;
+        opacity: 0.5;
+    }
+    
+    50% {
+        margin: -2px;
+        padding: 0;
+        opacity: 0.75;
+    }
+}
+
+.paControls .dragbox {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 50%;
+	height: 50%;
+    
+    background: transparent;
+
+	border: dashed #BBB 1px;
+
+	z-index: 10;
+
+	pointer-events: all;
+}
+
+.paintarea.move .paControls .dragbox {
+	cursor: move;
+}
+
+.paintarea.select .paControls .dragbox {
+	border: solid #000 1px;
+    outline: solid #6AF 1px;
+    border-radius: 4px;
+    
+    box-shadow: 0px 0px 3px 3px #6AF;
+    
+	cursor: pointer;
+    
+    animation-name: dragboxAnimation;
+    animation-duration: 1.2s;
+    animation-direction: normal;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+}
+
+.paControls .dragbox .point {
+	display: none;
+	position: absolute;
+	width: 0.5em;
+	height: 0.5em;
+	background: white;
+	border: solid #444 1px;
+	border-radius: 50%;
+
+	margin: -0.25em;
+
+	cursor: pointer;
+}
+
+.paControls .dragbox .point.top {
+	top: 0;
+}
+
+.paControls .dragbox .point.mid {
+	top: 50%;
+	bottom: 50%;
+}
+
+
+.paControls .dragbox .point.bottom {
+	bottom: 0;
+}
+
+.paControls .dragbox .point.left {
+	left: 0;
+}
+
+.paControls .dragbox .point.center {
+	left: 50%;
+	right: 50%;
+}
+
+
+.paControls .dragbox .point.right {
+	right: 0;
+}
+
+
+.paControls .dragbox .point.resize.top.left, .paControls .dragbox .point.resize.bottom.right  {
+	cursor: nwse-resize;
+}
+
+.paControls .dragbox .point.resize.center {
+	cursor: ns-resize;
+}
+
+.paControls .dragbox .point.resize.mid {
+	cursor: ew-resize;
+}
+
+.paControls .dragbox .point.resize.top.right, .paControls .dragbox .point.resize.bottom.left {
+	cursor: nesw-resize;
+}
+
+
+
+.paControls .dragbox .point.rot {
+	top: -1.5em;
+	left: 50%;
+	right: 50%;
+
+	cursor: grab;
+}
+
+.paControls .dragbox .point.rot:active {
+	cursor: grabbing;
+}
+
+
+
+.paControls .dragbox .point:hover {	
+	border-color: black;
+}
+
+.paControls .dragbox .point:active {
+	background: #CCC;
+	border-color: black;
+}
+
+.paintarea.move .paControls .dragbox .point {
+    display: block;
+}
+
+
+
+footer {
+	margin: 0 auto 3rem auto;
+	padding: 0.5em;
+	max-width: 64rem;
+	text-align: center;
+	color: #333;
+}
+
+
+/*Modals*/
+
+.modals {
+    display: block;
+    position: fixed;
+    z-index: 100;
+    
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    
+    /*Do not accept pointer events for the modal screen, except where permitted*/
+	pointer-events: none;
+}
+
+.banners {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: auto;
+}
+
+.banner {
+    display: block;
+    position: relative;
+    z-index: 20;
+    
+    font-size: 1.25em;
+    
+    background-color: white;
+    box-shadow: 0 8px 60px rgba(0, 0, 0, 0.33);
+    margin: 1em auto;
+    padding: 1em;
+    
+    
+    border-radius: 8px;
+    
+    max-width: 48em;
+    width: auto;
+    
+	pointer-events: all;
+}
+
+.bannerDismiss, .dialog .dismiss {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    
+    text-decoration: none;
+    margin: 0.125em;
+    padding: 0;
+    border-radius: 50%;
+    border: solid #ccc 1px;
+    background: white;
+    
+    text-align: center;
+    vertical-align: center;
+    width: 1em;
+    height: 1em;
+    
+    color: #888;
+    
+    font-size: 1em;
+    
+    box-sizing: border-box;
+    align-content: center;
+    align-items: center;
+    vertical-align: center;
+    align-self: center;
+    
+    cursor: pointer;
+}
+
+.bannerDismiss:hover, .dialog .dismiss:hover {
+    color: #000;
+}
+
+.bannerDismiss:active, .dialog .dismiss:active {
+    color: #000;
+    background: #EEE;
+}
+
+.bannerDismiss .bdinner, .dialog .dismiss .disinner {
+    display: block;
+    font-size: 0.85em;
+}
+
+.dialogs {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: auto;
+}
+
+.dialog {
+    display: flex;
+    flex-direction: row;
+    
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: auto;
+    align-items: center;
+    
+    z-index: 1000;
+    
+    background: rgba(0, 0, 0, 0.5);
+    
+    align-items: center;
+    
+    pointer-events: all;
+}
+
+.dialog > .dialogInner {
+    display: block;
+    position: relative;
+    margin: auto;
+    min-width: 15em;
+    min-height: 6em;
+    border-radius: 4px;
+    box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.5);
+    background: white;
+}
+
+.dialog .title {
+    display: block;
+    padding: 0.5rem;
+    border-bottom: solid #CCC 1px;
+    font-size: 1.5em;
+}
+
+.dialog .title .text {
+    display: block;
+    font-weight: bold;
+    font-size: 0.75em;
+    margin: 0;
+    padding: 0;
+}
+
+.dialog .content {
+    display: block;
+    padding: 0.5rem;
+}
+
+
+.loadScreen {
+    pointer-events: all;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    z-index: 1000;
+    
+    background: white;
+}
+
+.loadScreen .inner {
+    display: block;
+    text-align: center;
+    margin: auto;
+    font-size: 2em;
+    color: #333;
+}
+
+
+
+/* Color choosers */
+.colorChooser {
+    display: block;
+    padding: 0.25em 0.5em;
+}
+
+.colorChooser .colorPreview {
+    width: 5em;
+    height: 5em;
+    float: right;
+    display: block;
+    
+    border-radius: 0.5em;
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.5);
+}
+
+.colorChooser .colorSliderField {
+    margin: 0.25em 6em 0.25em 0;
+    padding: 0;
+    
+    display: flex;
+    flex-direction: row;
+    
+    align-items: center;
+    align-content: center;
+    align-self: center;
+}
+
+.colorChooser .colorSliderField label {
+    display: block;
+    background: #666;
+    color: white;
+    font-weight: bold;
+    
+    margin: 0 0.25em;
+    height: 1em;
+    width: 1em;
+    padding: 0.5em;
+    border-radius: 50%;
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.5);
+    
+    text-align: center;
+}
+
+.colorChooser .colorSliderField input[type="range"],
+.colorChooser .colorSliderField input[type="range" i]{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    
+    display: block;
+    width: 16em;
+    
+    border: solid #BBB 1px;
+    border-width: 0.5px 0 0.5px 0;
+    height: 0;
+    background: white;
+    
+    box-sizing: border-box;
+    
+    padding: 0;
+    margin: 0.5em;
+}
+
+/* Shadow elements unfortunately need separate CSS selectors... */
+.colorChooser .colorSliderField input[type="range" i]::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    
+    height: 1em;
+    width: 1em;
+    border: solid #888 1px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
+    cursor: grab;
+}
+.colorChooser .colorSliderField input[type="range" i]::-moz-range-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    
+    height: 1em;
+    width: 1em;
+    border: solid #888 1px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
+    cursor: grab;
+}
+.colorChooser .colorSliderField input[type="range" i]::-ms-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    
+    height: 1em;
+    width: 1em;
+    border: solid #888 1px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
+    cursor: grab;
+}
+.colorChooser .colorSliderField input[type="range" i]::thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    
+    height: 1em;
+    width: 1em;
+    border: solid #888 1px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
+    cursor: grab;
+}
+
+.colorChooser .colorSliderField input[type="range" i]::-webkit-slider-thumb:hover {
+    background: #eee;
+}
+.colorChooser .colorSliderField input[type="range" i]::-moz-range-thumb:hover {
+    background: #eee;
+}
+.colorChooser .colorSliderField input[type="range" i]::-ms-thumb:hover {
+    background: #eee;
+}
+.colorChooser .colorSliderField input[type="range" i]::thumb:hover {
+    background: #eee;
+}
+
+.colorChooser .colorSliderField input[type="range" i]::-webkit-slider-thumb:active {
+    background: #ccc;
+    cursor: grabbing;
+}
+.colorChooser .colorSliderField input[type="range" i]::-moz-range-thumb:active {
+    background: #ccc;
+    cursor: grabbing;
+}
+.colorChooser .colorSliderField input[type="range" i]::-ms-thumb:active {
+    background: #ccc;
+    cursor: grabbing;
+}
+.colorChooser .colorSliderField input[type="range" i]::thumb:active {
+    background: #ccc;
+    cursor: grabbing;
+}
+
+
+
+.colorChooser .colorSliderField label.red {
+    background: #800;
+}
+
+.colorChooser .colorSliderField label.green {
+    background: #080;
+}
+
+.colorChooser .colorSliderField label.blue {
+    background: #008;
+}
+
+.colorChooser .colorSliderField input[type="number" i] {
+    border: solid #BBB 1px;
+    text-align: left;
+    width: 3em;
+    height: 1em;
+    padding: 0.5em;
+    border-radius: 0.5em;
+    margin: 0 0.25em;
+    
+    font-family: Menlo, Consolas, "Lucida Console", "Courier New", Courier, monospace;
+}
+
+.colorChooser .colorConfirm {
+    clear: both;
+    margin: 0.25rem 0;
+    padding: 0.5rem 1rem;
+    font-size: 1.25em;
+    border: solid #888 1px;
+    border-radius: 0.5rem;
+    text-align: center;
+    color: black;
+    background: #F6F6F6;
+    
+    cursor: pointer;
+    width: 5rem;
+    
+    box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.5);
+}
+
+.colorChooser .colorConfirm:hover {
+    background: #EEE;
+}
+
+.colorChooser .colorConfirm:active {
+    background: #CCC;
+}
+
+
+
+.aiControls {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 10;
+}
+
+.aiControls .inner {
+    background: #333;
+    border-radius: 8px;
+    box-shadow: 0px 10px 25px #000;
+    margin: 1em;
+    padding: 0.5em;
+    
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.aiControls .inner > * {
+    display: block;
+}
+
+.aiControls .inner .category {
+    display: block;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    margin: 0;
+    padding: 0.5em;
+}
+
+.aiControls .inner button {
+    font-size: 1em;
+    margin: 0.25em 0;
+    padding: 1em;
+    color: white;
+    background: transparent;
+    border: solid #EEE 1px;
+    border-radius: 8px;
+    text-align: center;
+    display: inline-block;
+}
+
+.aiControls .inner button:hover {
+    cursor: pointer;
+    background: #555;
+}
+
+.aiControls .models .content {
+    overflow: hidden;
+    height: 0 !important;
+    width: 0 !important;
+    
+    transition: 0.5s;
+}
+
+.aiControls .models:hover .content {
+    overflow: hidden;
+    height: auto !important;
+    width: auto !important;
+    
+    max-width: 16em !important;
+}
+
+
+.XAI .XAIdesc {
+    margin: 0.25em;
+    font-weight: bold;
+}
+
+.XAI .XAIansers {
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.XAI .XAIansers .XAIans {
+    padding: 0.5em;
+    margin: 0.25em;
+    display: block;
+    border: solid #BBB 1px;
+    background: white;
+    
+    cursor: pointer;
+    color: black;
+    border-radius: 8px;
+    font-size: 0.8em;
+}
+
+.XAI .XAIansers .XAIans:hover {
+    background: #EEE;
+}
+
+.XAI .XAIansers .XAIans:active {
+    background: #CCC;
+}
