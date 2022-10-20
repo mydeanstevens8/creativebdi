@@ -136,6 +136,7 @@ const XAIModelSelect = {
         // Variant of the basic wheels of emotions + self-conscious emotions tested
         {text: "Data & cluster expectation and variance model", value: 0}, 
         {text: "Generative-shape based model", value: 1}, 
+        {text: "Innovative line generator", value: 2}, 
     ],
     response: function(bdim, choice) {
         bdim.desires.model = choice;
@@ -161,11 +162,11 @@ function XAIParamAdjust(name, value, callback, mul=1) {
     }
 }
 
-const XAIMetaSelect = {
+
+const XAIShapedSelect = {
     __proto__: XAIQuestionFramework,
-    description: "Give me a topic...",
+    description: "Give me a topic (in random shape generation)...",
     answers: [
-        // Variant of the basic wheels of emotions + self-conscious emotions tested
         {text: "Fill Novelty", value: "fill novel"}, 
         {text: "Fill Originality", value: "fill orig"}, 
         {text: "Fill Concreteness", value: "fill conc"}, 
@@ -188,7 +189,6 @@ const XAIMetaSelect = {
         {text: "Meta Originality", value: "meta orig"}, 
         {text: "Meta Concreteness", value: "meta conc"},  
         {text: "Meta Clustering", value: "meta clus"},
-        {text: "Model Choice", value: "modelchoice"},  
     ],
     response: function(bdim, choice) {
         var q = null;
@@ -288,9 +288,162 @@ const XAIMetaSelect = {
             }
         }
         
+        if(q !== null)
+            bdim.xai.askXAIQuestion(bdim, q);
+    }
+};
+
+
+const XAIMetaSelect = {
+    __proto__: XAIQuestionFramework,
+    description: "Give me a topic...",
+    answers: [
+        {text: "&gt; Shape generator settings", value: "shape_sub"}, 
+        {text: "&gt; Line generator settings", value: "line_sub"},  
+        {text: "&gt; Model Choice", value: "modelchoice"},  
+    ],
+    response: function(bdim, choice) {
+        var q = null;
+        
+        if(choice.includes("shape_sub")) {
+            q = XAIShapedSelect;
+        }
+        
+        if(choice.includes("line_sub")) {
+            q = XAILinesSelect;
+        }
+        
         if(choice.includes("modelchoice")) {
             q = XAIModelSelect;
         }
+        
+        console.log(q)
+        
+        if(q !== null)
+            bdim.xai.askXAIQuestion(bdim, q);
+    }
+};
+
+function XAIBool(msg, callback) {
+    return {
+        __proto__: XAIQuestionFramework,
+        description: msg,
+        answers: [
+            {text: "Yes", value: true},
+            {text: "No", value: false},
+        ],
+        response: function(bdim, choice) {
+            callback(choice);
+        }
+    };
+}
+
+const XAILinesSelect = {
+    __proto__: XAIQuestionFramework,
+    description: "Give me a topic (in line drawing)...",
+    answers: [
+        // Variant of the basic wheels of emotions + self-conscious emotions tested
+        {text: "Length target", value: "length targ"}, 
+        {text: "Length variation", value: "length var"}, 
+        {text: "Step target", value: "step targ"}, 
+        {text: "Step variation", value: "step var"}, 
+        {text: "Deviance target", value: "dev targ"}, 
+        {text: "Deviance variation", value: "dev var"},  
+        {text: "Start X", value: "start x"}, 
+        {text: "Start Y", value: "start y"}, 
+        
+        {text: "Color start from belief", value: "color belief"}, 
+        {text: "Color desire", value: "color desire"}, 
+        {text: "Stroke color start from belief", value: "stroke belief"}, 
+        {text: "Stroke color desire", value: "stroke desire"}, 
+        {text: "Stroke width start from belief", value: "sw belief"}, 
+        {text: "Stroke width desire", value: "sw desire"}, 
+        
+        {text: "Shape type start from belief", value: "st belief"}, 
+    ],
+    response: function(bdim, choice) {
+        var q = null;
+        
+        if(choice.includes("length")) {
+            if(choice.includes("targ")) {
+                q = XAIParamAdjust("length target", bdim.desires.lines.pos.length.target, (r) => bdim.desires.lines.pos.length.target = r, 1000);
+            }
+            if(choice.includes("var")) {
+                q = XAIParamAdjust("length variation", bdim.desires.lines.pos.length.var, (r) => bdim.desires.lines.pos.length.var = r, 200);
+            }
+        }
+        
+        if(choice.includes("step")) {
+            if(choice.includes("targ")) {
+                q = XAIParamAdjust("step target", bdim.desires.lines.pos.step.target, (r) => bdim.desires.lines.pos.step.target = r, 100);
+            }
+            if(choice.includes("var")) {
+                q = XAIParamAdjust("step variation", bdim.desires.lines.pos.step.var, (r) => bdim.desires.lines.pos.step.var = r, 20);
+            }
+        }
+        
+        if(choice.includes("dev")) {
+            if(choice.includes("targ")) {
+                q = XAIParamAdjust("deviance target", bdim.desires.lines.pos.deviance.target, (r) => bdim.desires.lines.pos.deviance.target = r, 90);
+            }
+            if(choice.includes("var")) {
+                q = XAIParamAdjust("deviance variation", bdim.desires.lines.pos.deviance.var, (r) => bdim.desires.lines.pos.deviance.var = r, 30);
+            }
+        }
+        
+        if(choice.includes("start")) {
+            if(choice.includes("x")) {
+                q = XAIParamAdjust("deviance target", bdim.desires.lines.pos.start.x, (r) => bdim.desires.lines.pos.start.x = r, 1000);
+            }
+            if(choice.includes("y")) {
+                q = XAIParamAdjust("deviance variation", bdim.desires.lines.pos.start.y, (r) => bdim.desires.lines.pos.start.y = r, 1000);
+            }
+        }
+        
+        
+        if(choice.includes("color")) {
+            if(choice.includes("belief")) {
+                q = XAIBool("Turn on fill color belief from shape?", (r) => bdim.desires.lines.color.startFromBelief = r);
+            }
+            if(choice.includes("desire")) {
+                // Color chooser here
+                painter.launchCustomColorChooserEx((r) => bdim.desires.lines.color.startDesire = r, (r,g,b,a) => [r, g, b, a]);
+                return;
+            }
+        }
+        
+        
+        if(choice.includes("stroke")) {
+            if(choice.includes("belief")) {
+                q = XAIBool("Turn on stroke color belief from shape?", (r) => bdim.desires.lines.strokeColor.startFromBelief = r);
+            }
+            if(choice.includes("desire")) {
+                // Color chooser here
+                painter.launchCustomColorChooserEx((r) => bdim.desires.lines.strokeColor.startDesire = r, (r,g,b,a) => [r, g, b, a]);
+                return;
+            }
+        }
+        
+        
+        if(choice.includes("sw")) {
+            if(choice.includes("belief")) {
+                q = XAIBool("Turn on stroke width belief from shape?", (r) => bdim.desires.lines.strokeWidth.startFromBelief = r);
+            }
+            if(choice.includes("desire")) {
+                // Color chooser here
+                q = XAIParamAdjust("stroke width desire", bdim.desires.lines.strokeWidth.startDesire, 
+                                   (r) => bdim.desires.lines.strokeWidth.startDesire = r, 100);
+                return;
+            }
+        }
+        
+        
+        if(choice.includes("st")) {
+            if(choice.includes("belief")) {
+                q = XAIBool("Turn on shape type belief?", (r) => bdim.desires.lines.shapeType.startFromBelief = r);
+            }
+        }
+        
         
         console.log(q)
         

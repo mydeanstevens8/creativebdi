@@ -50,7 +50,9 @@ const beliefs = {
         data: [],
     },
 
+    // These models are collective images that have shapes inside them.
     basisBelief: [], // A bare list of models of which we can base our creative drawings from.
+    
     clips: {
         hardXMin: 0,
         hardYMin: 0,
@@ -72,6 +74,9 @@ const beliefs = {
         ratings: [],
         emotions: [],
     },
+    
+    // Beliefs about the last shape for line drawing
+    lastShape: null,
 };
 
 function BDIBeliefs() {
@@ -121,12 +126,91 @@ const desires = {
         }
     },
     
+    // Line drawer desires! The innovative creative line tool
+    lines: {
+        pos: {
+            length: {
+                target: 1000,
+                var: 200,  // Variance here is not a normal dist, but is in fact simulating a uniform distribution in both directions.
+            },
+            step: {
+                target: 50,
+                var: 10
+            },
+            deviance: {
+                target: 5,
+                var: 5
+            },
+            branching: {
+                probability: 0.2,
+                deviance: {
+                    target: 0,
+                    var: 60
+                },
+                
+                startBranches: 3,
+                midBranches: 2,
+            },
+            start: {
+                x: 500,
+                y: 500,
+                varX: 100,
+                varY: 100
+            }
+        },
+        // Fill color
+        color: {
+            startFromBelief: false,
+            startDesire: [0, 0, 0, 1],
+            randomWalk: {
+                target: 10,
+                var: 5
+            },
+            randomVar: {
+                target: 10,
+                var: 5
+            },
+            // Use random walk if true, otherwise stay at var.
+            walkMode: true,
+            // Applies to alpha values as well when non-zero.
+            alphaScalar: 0
+        },
+        strokeColor: {
+            startFromBelief: false,
+            startDesire: [0, 0, 0, 1],
+        },
+        strokeWidth: {
+            startFromBelief: false,
+            startDesire: 2,
+        },
+        
+        shapeType: {
+            startFromBelief: false,
+            startDesire: 1,
+        },
+        
+        size: {
+            default: 64
+        }
+    },
+    
     // Choice of model to use.
     model: 1
 };
 
 function BDIDesires() {}
 Object.assign(BDIDesires.prototype, desires);
+
+function helperSampleUnif(varb) {
+    return varb.target + varb.var * (EMath.random() * 2 - 1); 
+}
+
+function helperStartSamp(svarb) {
+    return [
+        svarb.x + svarb.varX * (EMath.random() * 2 - 1),
+        svarb.y + svarb.varY * (EMath.random() * 2 - 1)
+    ];
+}
 
 // We have concrete and abstract analysis of information for BDI.
 const bdiEngine =  {
@@ -477,6 +561,142 @@ const bdiEngine =  {
                 ns.height = (shape1.height + shape2.height) / 2;
             },
         },
+        lines: {
+            // Direction in degrees.
+            generateBranch(bdim, model, remainingLength, currentPosition, currentColor, direction, shapeType, size, strokeColor, strokeWidth) {
+                // Model objects
+                while(remainingLength > 0) {
+                    var step = helperSampleUnif(bdim.desires.lines.pos.step);
+                    var deviance = helperSampleUnif(bdim.desires.lines.pos.deviance);
+                    
+                    var alphaChange = bdim.desires.lines.color.alphaScalar;
+                    
+                    // Color walks
+                    var cRanWF = () => helperSampleUnif(bdim.desires.lines.color.randomWalk);
+                    // Generate 4 random
+                    var cRanWC = [cRanWF(), cRanWF(), cRanWF(), alphaChange * cRanWF()];
+                    
+                    var cRanVF = () => helperSampleUnif(bdim.desires.lines.color.randomVar);
+                    // Generate 4 random
+                    var cRanVC = [cRanVF(), cRanVF(), cRanVF(), alphaChange * cRanVF()];
+                    
+                    var walkMode = bdim.desires.lines.color.walkMode;
+                    
+                    // Convert to rad
+                    var displacement = helperMul([Math.cos(direction * (Math.PI / 180)), Math.sin(direction * (Math.PI / 180))], step);
+                    
+                    // Update remaining length
+                    remainingLength -= step;
+                    
+                    // Update direction
+                    direction += deviance;
+                    
+                    // Update current position
+                    currentPosition = helperAdd(currentPosition, displacement);
+                    
+                    // Update current color
+                    var walkedColor = helperAdd(currentColor, walkMode? cRanWC : cRanVC);
+                    
+                    // Generate the shape according to strict criteria.
+                    var newShape = new NeuralObject();
+                    newShape.x = currentPosition[0];
+                    newShape.y = currentPosition[1];
+                    
+                    newShape.type = shapeType;
+                    
+                    newShape.width = size[0];
+                    newShape.height = size[1];
+                    
+                    newShape.fill = walkedColor;
+                    newShape.stroke = strokeColor;
+                    newShape.strokeWidth = strokeWidth;
+                    
+                    if(walkMode) {
+                        currentColor = walkedColor;
+                    }
+                    
+                    // Add the new shape
+                    model.objects.push(newShape);
+                    
+                    var willBranch = EMath.random() < bdim.desires.lines.pos.branching.probability;
+                    
+                    // Check if we branch. If so, branch into two and break
+                    if(willBranch) {
+                        var branches = bdim.desires.lines.pos.branching.midBranches;
+                        
+                        var dirDev = helperSampleUnif(bdim.desires.lines.pos.branching.deviance);
+                        
+                        var dirDevs = [dirDev, -dirDev, 0];
+                        
+                        for(var b = 0; b < branches; b++) {
+                            model = this.generateBranch(bdim, model, remainingLength, currentPosition, currentColor, 
+                                           helperAdd(direction, dirDevs[b]), 
+                                           shapeType, size, strokeColor, strokeWidth);
+                        }
+                        
+                        break;
+                    }
+                    
+                }
+                
+                return model;
+            },
+            
+            startBranch(bdim, model) {
+                var rl = helperSampleUnif(bdim.desires.lines.pos.length);
+                var fillColor = bdim.desires.lines.color.startDesire;
+                var strokeColor = bdim.desires.lines.strokeColor.startDesire;
+                
+                var strokeWidth = bdim.desires.lines.strokeWidth.startDesire;
+                
+                var shapeType = bdim.desires.lines.shapeType.startDesire;
+                
+                var ls = bdim.beliefs.lastShape;
+                
+                // Always start at a desired position
+                var pos = helperStartSamp(bdim.desires.lines.pos.start);
+                
+                // Starting from the belief
+                if(bdim.desires.lines.color.startFromBelief && ls !== null) {
+                    fillColor = ls.fill;
+                }
+                
+                if(bdim.desires.lines.strokeColor.startFromBelief && ls !== null) {
+                    strokeColor = ls.stroke;
+                }
+                
+                if(bdim.desires.lines.strokeWidth.startFromBelief && ls !== null) {
+                    strokeWidth = ls.strokeWidth;
+                }
+                
+                if(bdim.desires.lines.shapeType.startFromBelief && ls !== null) {
+                    shapeType = ls.type;
+                }
+                
+                var sizeDef = bdim.desires.lines.size.default;
+                
+                var size = [sizeDef, sizeDef];
+                
+                if(ls !== null) {
+                    size = [ls.width, ls.height];
+                }
+                
+                console.log("Starting with ls: ", ls);
+                
+                // Split into some branches here (let's say 3).
+                var branches = bdim.desires.lines.pos.branching.startBranches;
+                for(var i = 0; i < branches; i++) {
+                    // Random direction for each branch.
+                    var direction = EMath.random() * 360;
+                    
+                    // Start generating, and it goes uphill from there.
+                    model = this.generateBranch(bdim, model, rl, pos, fillColor, direction, shapeType, size, strokeColor, strokeWidth);
+                }
+                
+                
+                return model;
+            },
+        }
     },
     
     lastImage: null,
@@ -1175,14 +1395,39 @@ const bdiEngine =  {
             
             return ultimateModel;
         },
+        linegen(bdim) {
+            var model = new NeuralImageModel(); // Full image object
+            console.log("Line generator!", bdim);
+            bdim.intentions.lines.startBranch(bdim, model);
+            return model;
+        },
     },
     
     getModellerList() {
-        return [this.modellers.gen1, this.modellers.gen2];
+        return [this.modellers.gen1, this.modellers.gen2, this.modellers.linegen];
+    },
+    
+    updateLastShape() {
+        var mod = helperCreateNeuralImageModel();
+        
+        // Last shape is assumed to be the last element
+        if(mod.objects.length > 0) {
+            var lS = mod.objects[mod.objects.length - 1];
+            
+            console.log("Last shape:", lS)
+            
+            this.beliefs.lastShape = lS;
+        }
+        else{
+            this.beliefs.lastShape = null;
+        }
     },
     
     // Generate from BDI model.
     generateFromBDI: function() {
+        // Update the last shape belief.
+        this.updateLastShape();
+        
         // Select a model from the desires
         var modelSelect = this.getModellerList()[this.desires.model];
         var model = modelSelect(this);
