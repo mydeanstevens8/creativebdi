@@ -327,16 +327,28 @@ const intentions = {
                 var step = helperSampleUnif(bdim.desires.lines.pos.step);
                 var deviance = helperSampleUnif(bdim.desires.lines.pos.deviance);
 
+                // Usually 0, hence no alpha change.
                 var alphaChange = bdim.desires.lines.color.alphaScalar;
 
                 // Color walks
                 var cRanWF = () => helperSampleUnif(bdim.desires.lines.color.randomWalk);
+                
+                // Generate a random sign to walk in different directions. Alpha alwayss stays as true
+                // False means negative, true means positive.
+                var cRanSgn = [EMath.random() < 0.5, EMath.random() < 0.5, EMath.random() < 0.5, true];
+                // Number form of the above
+                var cRanSgnN = cRanSgn.map(b => b? 1 : -1);
+                
                 // Generate 4 random
                 var cRanWC = [cRanWF(), cRanWF(), cRanWF(), alphaChange * cRanWF()];
+                // Multiply by the sign parameter
+                cRanWC = helperMulVe(cRanWC, cRanSgnN);
 
                 var cRanVF = () => helperSampleUnif(bdim.desires.lines.color.randomVar);
                 // Generate 4 random
                 var cRanVC = [cRanVF(), cRanVF(), cRanVF(), alphaChange * cRanVF()];
+                // Multiply by the sign parameter
+                cRanVC = helperMulVe(cRanVC, cRanSgnN);
 
                 var walkMode = bdim.desires.lines.color.walkMode;
 
@@ -354,6 +366,9 @@ const intentions = {
 
                 // Update current color
                 var walkedColor = helperAdd(currentColor, walkMode? cRanWC : cRanVC);
+                
+                // Clamp strictly to color range.
+                walkedColor.map(val => EMath.clamp(val, 0, 255));
 
                 // Generate the shape according to strict criteria.
                 var newShape = new NeuralObject();

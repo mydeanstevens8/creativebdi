@@ -146,7 +146,7 @@ const XAIModelSelect = {
 function XAIParamAdjust(name, value, callback, mul=1) {
     return {
         __proto__: XAIQuestionFramework,
-        description: "<span>Adjust my "+name+":</span><input type='range' min='0' max='1' step='0.01' value='"+value+"' id='xaislider' name='xaislider' />",
+        description: "<span>Adjust my "+name+":</span><input type='range' min='0' max='1' step='any' value='"+(value/mul)+"' id='xaislider' name='xaislider' />",
         answers: [
             // Variant of the basic wheels of emotions + self-conscious emotions tested
             {text: "OK", value: true}, 
@@ -324,13 +324,13 @@ const XAIMetaSelect = {
     }
 };
 
-function XAIBool(msg, callback) {
+function XAIBool(msg, callback, yval="Yes", nval="No") {
     return {
         __proto__: XAIQuestionFramework,
         description: msg,
         answers: [
-            {text: "Yes", value: true},
-            {text: "No", value: false},
+            {text: yval, value: true},
+            {text: nval, value: false},
         ],
         response: function(bdim, choice) {
             callback(choice);
@@ -352,8 +352,16 @@ const XAILinesSelect = {
         {text: "Start X", value: "start x"}, 
         {text: "Start Y", value: "start y"}, 
         
+        {text: "Branching probability", value: "branch prob"},  
+        
         {text: "Color start from belief", value: "color belief"}, 
         {text: "Color desire", value: "color desire"}, 
+        
+        {text: "Color random walk target", value: "color randw targ"}, 
+        {text: "Color random walk variance", value: "color randw var"}, 
+        {text: "Color random variance", value: "color randv"}, 
+        {text: "Color randomness choice", value: "color rwvuse"}, 
+        
         {text: "Stroke color start from belief", value: "stroke belief"}, 
         {text: "Stroke color desire", value: "stroke desire"}, 
         {text: "Stroke width start from belief", value: "sw belief"}, 
@@ -410,6 +418,23 @@ const XAILinesSelect = {
                 painter.launchCustomColorChooserEx((r) => bdim.desires.lines.color.startDesire = r, (r,g,b,a) => [r, g, b, a]);
                 return;
             }
+            
+            if(choice.includes("randw")) {
+                if(choice.includes("targ")) {
+                    q = XAIParamAdjust("color random walk target", bdim.desires.lines.color.randomWalk.target, (r) => bdim.desires.lines.color.randomWalk.target = r, 100);
+                }
+                if(choice.includes("var")) {
+                    q = XAIParamAdjust("color random walk variance", bdim.desires.lines.color.randomWalk.var, (r) => bdim.desires.lines.color.randomWalk.var = r, 30);
+                }
+            }
+            
+            if(choice.includes("randv")) {
+                q = XAIParamAdjust("color random variance target", bdim.desires.lines.color.randomVar.target, (r) => bdim.desires.lines.color.randomVar.target = r, 100);
+            }
+            
+            if(choice.includes("rwvuse")) {
+                q = XAIBool("Use color walking or simple variance?", (r) => bdim.desires.lines.color.walkMode = r, "Color walking", "Simple variance");
+            }
         }
         
         
@@ -433,7 +458,6 @@ const XAILinesSelect = {
                 // Color chooser here
                 q = XAIParamAdjust("stroke width desire", bdim.desires.lines.strokeWidth.startDesire, 
                                    (r) => bdim.desires.lines.strokeWidth.startDesire = r, 100);
-                return;
             }
         }
         
@@ -444,6 +468,11 @@ const XAILinesSelect = {
             }
         }
         
+        if(choice.includes("branch")) {
+            if(choice.includes("prob")) {
+                q = XAIParamAdjust("branching probability", bdim.desires.lines.pos.branching.probability, (r) => bdim.desires.lines.pos.branching.probability = r, 1);
+            }
+        }
         
         console.log(q)
         
